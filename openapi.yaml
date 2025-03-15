@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Sample OpenAPI for Testing
+  version: '1.0'
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+        '404':
+          description: User not found
+
+components:
+  schemas:
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+        age:
+          type: integer
+          default: 25
+        role:
+          $ref: '#/components/schemas/UserRole'
+        userLevel:
+          $ref: '#/components/schemas/UserLevel'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        tags:
+          type: array
+          items:
+            type: string
+          default: ["sample"]
+    CreateUserResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          default: created
+        settings:
+          $ref: '#/components/schemas/UserSettings'
+    GetUserResponse:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        userLevel:
+          $ref: '#/components/schemas/UserLevel'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    Metadata:
+      type: object
+      required:
+        - timestamp
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+          default: true
+        key:
+          type: string
+    UserRole:
+      type: string
+      enum:
+        - ADMIN
+        - USER
+        - GUEST
+      x-enum-varnames:
+        - Admin
+        - User
+        - Guest
+      default: GUEST
+    UserLevel:
+      type: integer
+      enum:
+        - 0
+        - 1
+        - 2
+      x-enum-varnames:
+        - LevelZero
+        - LevelOne
+        - LevelTwo
+      default: 1
+    UserSettings:
+      type: object
+      properties:
+        theme:
+          type: string
+          default: dark
+        notificationsEnabled:
+          type: boolean
